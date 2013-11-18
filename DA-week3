@@ -1,0 +1,151 @@
+##Code from Jeff Leek's Class Week3
+#Following along his slide
+
+getwd()
+
+fileUrl <- "http://data.baltimorecity.gov/api/views/dz54-2aru/rows.csv?accessType=DOWNLOAD"
+download.file(fileUrl, destfile="./CourseraDA/cameras.csv")
+list.files()
+
+dateDownloaded <- date()
+dateDownloaded
+
+getwd()
+
+cameraData <- read.csv("./CourseraDA/cameras.csv")
+head(cameraData)
+
+con <-file("./CourseraDA/cameras.csv","r")
+cameraData <- read.csv(con)
+close(con)
+head(cameraData)
+
+con <- url("http://simplystatistics.org","r")
+simplyStats <- readLines(con,20)
+close(con)
+head(simplyStats)
+
+cameraData <- read.csv("./CourseraDA/cameras.csv")
+tmpData <- cameraData[,-1]
+write.table(tmpData,file="./CourseraDA/camerasModified.csv",sep=",")
+cameraData2 <- read.csv("./CourseraDA/camerasModified.csv")
+head(cameraData2)
+
+#Writing Data, save in .rds format
+cameraData <- read.csv("./CourseraDA/cameras.csv")
+tmpData <- cameraData[,-1]
+save(tmpData,cameraData,file="./CourseraDA/cameras.rda")
+
+#Reading saved data, opposite of save()
+
+#Remove everything from the workdspace
+rm(list=ls())
+ls()
+
+# Load data
+load("./CourseraDA/cameras.rda")
+ls()
+
+#Paste() paste0() for pasting character strings together
+
+#looping
+for(i in 1:5){
+  fileName =paste0("./CourseraDA",i,"csv")
+  print(fileName)
+}
+
+#Earthquake data for summarizing data
+
+#Download file
+fileUrl <- "http://earthquake.usgs.gov/earthquakes/feed/v1.0/summary/all_week.csv"
+download.file(fileUrl,destfile="./CourseraDA/earthquakeData.csv")
+dateDownloaded <- date()
+dateDownloaded
+
+eData <- read.csv("./CourseraDA/earthquakeData.csv")
+
+dim(eData)
+
+names(eData)
+
+summary(eData)
+
+#Peerview data
+
+fileUrl1 <- "https://dl.dropbox.com/u/7710864/data/reviews-apr29.csv"
+fileUrl2 <- "https://dl.dropbox.com/u/7710864/data/solutions-apr29.csv"
+download.file(fileUrl1,destfile="./courseraDA/reviews.csv")
+download.file(fileUrl2,destfile="./courseraDA/solutions.csv")
+reviews <- read.csv("./courseraDA/reviews.csv"); solutions <- read.csv("./courseraDA/solutions.csv")
+
+head(reviews,2)
+
+head(solutions,2)
+
+is.na(reviews$time_left[1:10])
+
+table(is.na(reviews$time_left))
+
+colSums(reviews,na.rm=T)
+
+#Data Munging
+
+#Fixing Character vectors
+
+cameraData <- read.csv ("./courseraDA/cameras.csv")
+names(cameraData)
+
+tolower(names(cameraData))
+
+splitNames = strsplit(names(cameraData),"\\.")
+splitNames[[5]]
+splitNames[[6]]
+
+splitNames[[6]][1]
+
+firstElement <- function(x){x[1]}
+sapply(splitNames,firstElement)
+
+reviews <- read.csv("./courseraDA/reviews.csv"); solutions <- read.csv("./courseraDA/solutions.csv")
+
+names(reivews)
+
+sub("_","",names(reviews),)
+
+reivews$time_left[1:10]
+
+timeRanges <- cut(reivews$time_left,seq(0,3600,by=600))
+timeRanges[1:10]
+class(timeRanges)
+table(timeRanges,useNA="ifany")
+
+library(Hmisc)
+timeRanges <- cut2(reivews$time_left,g=6)
+table(timeRanges,useNA="ifany")
+reviews$timeRanges <- timeRanges
+head(reviews,2)
+
+mergedData2 <- merge(reivews,solutions,by.x="solution_id",by.y="id",all=T)
+head(mergedData2[,1:6],3)
+
+reivews[1,1:6]
+
+mergedData2$reviewer_id[1:10]
+
+sort(mergedData2$reviewer_id)[1:10]
+
+head(mergedData2[1:6],3)
+
+sortedData <- mergedData2[order(mergedData2$reviewer_id),]
+head(sortedData[,1:6],3)
+
+sortedData <- mergedData2[order(mergedData2$reviewer_id,mergedData2$id),]
+head(sortedData[,1:6],3)
+
+misShaped <- as.data.frame(matrix(c(NA,5,1,4,2,3),byrow=T,nrow=3))
+names(misShaped) <- c("treatmentA", "treatmentB")
+misShaped$people <- c("John","Jane","Mary")
+misShaped
+
+library(reshape2)
+melt(misShaped,id.vars="people",variable.name="treatment",value.name="value")
